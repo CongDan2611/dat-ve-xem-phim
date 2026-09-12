@@ -1,5 +1,4 @@
-#ifndef STAFF_H
-#define STAFF_H
+#pragma once
 
 #include "../Person/Person.h"
 
@@ -27,4 +26,3 @@ public:
     void displayInfo() const override;
     string getType() const override;
 };
-#endif

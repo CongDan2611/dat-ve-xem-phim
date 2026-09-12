@@ -1,5 +1,4 @@
-#ifndef PERSON_H
-#define PERSON_H
+#pragma once
 
 #include <string>
 
@@ -31,4 +30,3 @@ public:
     virtual void displayInfo() const = 0;
     virtual string getType() const = 0;
 };
-#endif
