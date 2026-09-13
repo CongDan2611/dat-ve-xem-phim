@@ -3,10 +3,12 @@
 #include "Movie.h"
 #include "CinemaRoom.h"
 
+using namespace std;
+
 class Showtime {
 private:
-    std::string showtimeId;  // Mã lịch chiếu (VD: ST01)
-    std::string startTime;   // Giờ chiếu (VD: "18:00 20/10/2023")
+    string showtimeId;  // Mã lịch chiếu (VD: ST01)
+    string startTime;   // Giờ chiếu (VD: "18:00 20/10/2023")
     
     // MỐI QUAN HỆ KẾT HỢP (Aggregation): 
     // Lịch chiếu trỏ tới Phim và Phòng chứ không trực tiếp tạo ra chúng.
@@ -16,7 +18,7 @@ private:
 
 public:
     // Constructor nhận vào con trỏ của Movie và CinemaRoom
-    Showtime(std::string id, std::string time, Movie* m, CinemaRoom* r);
+    Showtime(string id, string time, Movie* m, CinemaRoom* r);
 
     // In thông tin tổng hợp của 1 lịch chiếu
     void displayShowtimeInfo() const;

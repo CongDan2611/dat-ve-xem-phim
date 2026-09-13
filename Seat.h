@@ -2,21 +2,23 @@
 #include <string>
 #include <iostream>
 
+using namespace std; // Khai báo dùng chung để bỏ std:: ở dưới
+
 class Seat {
 private:
-    std::string row; // Hàng ghế (Ví dụ: A, B, C)
+    string row;      // Hàng ghế (Ví dụ: A, B, C)
     int number;      // Số ghế trong hàng (Ví dụ: 1, 2, 3)
     bool isBooked;   // Trạng thái ghế: true (đã đặt), false (còn trống)
 
 public:
     // Hàm khởi tạo (Constructor) có tham số mặc định. 
     // Nếu tạo đối tượng mà không truyền giá trị, nó sẽ mặc định là ghế A1.
-    Seat(std::string r = "A", int num = 1);
+    Seat(string r = "A", int num = 1);
 
     // --- GETTERS (Tính đóng gói) ---
     // Từ khóa 'const' ở cuối hàm báo cho trình biên dịch biết: 
     // Hàm này chỉ đọc dữ liệu, tuyệt đối không làm thay đổi thuộc tính của class.
-    std::string getSeatName() const; 
+    string getSeatName() const; 
     bool getStatus() const;
     
     // --- NGHIỆP VỤ ---

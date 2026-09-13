@@ -2,12 +2,12 @@
 
 // Sử dụng Danh sách khởi tạo (Initializer list) ':' để gán giá trị nhanh cho thuộc tính
 // isBooked luôn khởi tạo là false (ghế mới tạo mặc định là trống)
-Seat::Seat(std::string r, int num) : row(r), number(num), isBooked(false) {}
+Seat::Seat(string r, int num) : row(r), number(num), isBooked(false) {}
 
 // Hàm ghép hàng và số lại thành tên ghế (Ví dụ: Hàng "A" + số 1 => "A1")
-// Sử dụng std::to_string để ép kiểu số nguyên (int) sang chuỗi (string)
-std::string Seat::getSeatName() const {
-    return row + std::to_string(number);
+// Sử dụng to_string để ép kiểu số nguyên (int) sang chuỗi (string)
+string Seat::getSeatName() const {
+    return row + to_string(number);
 }
 
 // Trả về trạng thái của ghế (có ai đặt chưa)
@@ -26,5 +26,5 @@ bool Seat::bookSeat() {
 
 // Hàm hiển thị dạng text. [A1:O] là trống, [A1:X] là đã đặt
 void Seat::displaySeat() const {
-    std::cout << "[" << getSeatName() << (isBooked ? ":X" : ":O") << "] ";
+    cout << "[" << getSeatName() << (isBooked ? ":X" : ":O") << "] ";
 }
