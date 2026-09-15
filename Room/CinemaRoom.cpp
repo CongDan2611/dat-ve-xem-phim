@@ -1,38 +1,28 @@
 #include "CinemaRoom.h"
 #include <iostream>
 
-// Khi khởi tạo phòng chiếu, ta gọi luôn hàm initializeSeats() để tự động lấp đầy ghế
-CinemaRoom::CinemaRoom(string id, int rows, int seatsPR) 
-    : roomId(id), totalRows(rows), seatsPerRow(seatsPR) {
-    initializeSeats();
-}
-
-// Thuật toán sinh tên ghế tự động (A1, A2... B1, B2...)
-void CinemaRoom::initializeSeats() {
-    for (int i = 0; i < totalRows; ++i) {
-        // Dùng mã ASCII để đổi số thành chữ cái. 
-        // i = 0 -> 'A' + 0 = 'A'. i = 1 -> 'A' + 1 = 'B'
-        string rowName(1, 'A' + i); 
-        
-        for (int j = 1; j <= seatsPerRow; ++j) {
-            // Tạo đối tượng Seat mới và đẩy vào mảng vector
-            seats.push_back(Seat(rowName, j)); 
-        }
-    }
+CinemaRoom::CinemaRoom(string id, string name) : roomId(id), roomName(name) {
+    // Khởi tạo mẫu 6 ghế cho phòng chiếu (4 ghế thường, 2 ghế VIP)
+    seats.push_back(Seat("A1", false));
+    seats.push_back(Seat("A2", false));
+    seats.push_back(Seat("A3", false));
+    seats.push_back(Seat("A4", false));
+    seats.push_back(Seat("B1", true)); // Ghế VIP
+    seats.push_back(Seat("B2", true)); // Ghế VIP
 }
 
 string CinemaRoom::getRoomId() const { return roomId; }
+string CinemaRoom::getRoomName() const { return roomName; }
+vector<Seat>& CinemaRoom::getSeats() { return seats; }
 
-// Vòng lặp in sơ đồ phòng chiếu
 void CinemaRoom::displayRoomMap() const {
-    cout << "--- So do phong chieu " << roomId << " ---" << endl;
-    int count = 0;
-    // Dùng vòng lặp for-each (C++11 trở lên) duyệt qua mảng ghế
-    // 'const auto&' giúp duyệt nhanh mà không cần copy dữ liệu (tiết kiệm bộ nhớ)
-    for (const auto& seat : seats) {
-        seat.displaySeat();
-        count++;
-        // Xuống dòng khi in đủ số ghế của một hàng
-        if (count % seatsPerRow == 0) cout << endl;
+    cout << "\n========================================" << endl;
+    cout << "       --- MAN HINH CHIEU PHIM ---      " << endl;
+    cout << "========================================" << endl;
+    for (int i = 0; i < seats.size(); i++) {
+        cout << "[" << i + 1 << "] Ghe " << seats[i].getSeatId() 
+             << (seats[i].getIsVIP() ? " [VIP]" : " [Thuong]")
+             << (seats[i].getIsBooked() ? " --> (Da duoc dat)" : " --> [Trong]") << endl;
     }
+    cout << "----------------------------------------" << endl;
 }

@@ -1,17 +1,17 @@
 #include "Showtime.h"
-#include <iostream>
 
-// Hàm in thông tin chi tiết
-void Showtime::displayShowtimeInfo() const {
-    cout << "== LICH CHIEU: " << showtimeId << " ==" << endl;
-    cout << "Thoi gian: " << startTime << endl;
-    
-    // Rất quan trọng: Luôn kiểm tra con trỏ có null (rỗng) hay không trước khi gọi hàm
-    // Nếu không kiểm tra, chương trình sẽ bị crash (lỗi văng ứng dụng) nếu con trỏ rỗng
-    if (movie != nullptr) {
-        movie->displayMovieInfo(); // Dùng toán tử '->' để gọi hàm từ con trỏ
-    }
-    if (room != nullptr) {
-        cout << "Phong chieu: " << room->getRoomId() << endl;
-    }
+Showtime::Showtime(string sId, string mId, string rId, string date, string time, double price)
+    : showtimeId(sId), movieId(mId), roomId(rId), showDate(date), startTime(time), basePrice(price) {}
+
+string Showtime::getShowtimeId() const { return showtimeId; }
+string Showtime::getMovieId() const { return movieId; }
+string Showtime::getRoomId() const { return roomId; }
+string Showtime::getShowDate() const { return showDate; }
+string Showtime::getStartTime() const { return startTime; }
+double Showtime::getBasePrice() const { return basePrice; }
+
+void Showtime::displayShowtime() const {
+    cout << "Ma suat: " << showtimeId << " | Ngay: " << showDate 
+         << " | Gio: " << startTime << " | Phong: " << roomId 
+         << " | Gia ve co ban: " << basePrice << " VND" << endl;
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include "../Movie/MovieManager.h"
 #include "../Showtime/ShowtimeManager.h"
+#include "../Ticket/Ticket.h" // Nạp thư viện Vé vào
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -10,11 +12,14 @@ private:
     MovieManager movieMgr;
     ShowtimeManager showtimeMgr;
 
-    // Các hàm giao diện chia theo phân quyền
     void showCustomerMenu();
     void showAdminMenu();
+    
+    // --- Các hàm phụ trợ cho luồng giao diện mới ---
+    void displayAndSelectMovie(vector<Movie>& movies);
+    void bookingFlow(Movie selectedMovie);
 
 public:
     Menu();
-    void run(); // Hàm vòng lặp chính của chương trình
+    void run(); 
 };

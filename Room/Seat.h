@@ -1,30 +1,20 @@
 #pragma once
 #include <string>
-#include <iostream>
 
-using namespace std; // Khai báo dùng chung để bỏ std:: ở dưới
+using namespace std;
 
 class Seat {
 private:
-    string row;      // Hàng ghế (Ví dụ: A, B, C)
-    int number;      // Số ghế trong hàng (Ví dụ: 1, 2, 3)
-    bool isBooked;   // Trạng thái ghế: true (đã đặt), false (còn trống)
+    string seatId; // VD: "A1", "B2"
+    bool isVIP;    // true nếu là ghế VIP
+    bool isBooked; // true nếu đã đặt
 
 public:
-    // Hàm khởi tạo (Constructor) có tham số mặc định. 
-    // Nếu tạo đối tượng mà không truyền giá trị, nó sẽ mặc định là ghế A1.
-    Seat(string r = "A", int num = 1);
+    Seat(string id = "", bool vip = false, bool booked = false);
 
-    // --- GETTERS (Tính đóng gói) ---
-    // Từ khóa 'const' ở cuối hàm báo cho trình biên dịch biết: 
-    // Hàm này chỉ đọc dữ liệu, tuyệt đối không làm thay đổi thuộc tính của class.
-    string getSeatName() const; 
-    bool getStatus() const;
+    string getSeatId() const;
+    bool getIsVIP() const;
+    bool getIsBooked() const;
     
-    // --- NGHIỆP VỤ ---
-    // Hàm thực hiện hành động đặt ghế. Trả về true nếu đặt thành công.
-    bool bookSeat();
-    
-    // Hàm in trạng thái ghế ra màn hình
-    void displaySeat() const;
+    void setBooked(bool booked);
 };

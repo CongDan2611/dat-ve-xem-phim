@@ -2,6 +2,8 @@
 #include "../Core/DataManager.h"
 #include "Showtime.h"
 #include <fstream>
+#include <sstream>
+#include <vector>
 #include <iostream>
 
 using namespace std;
@@ -14,31 +16,51 @@ public:
         ifstream file(fileName);
         if (!file.is_open()) return;
 
-        string id, movieId, roomId, date, time;
-        double price;
-        
-        // Đọc liên tục các khoảng trắng cho đến hết file
-        while (file >> id >> movieId >> roomId >> date >> time >> price) {
-            // Tạm thời truyền nullptr cho Movie và Room vì chúng ta sẽ liên kết chúng sau
-            Showtime st(id, date, time, price, nullptr, nullptr);
-            add(st);
+        string line;
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string sId, mId, rId, date, time, priceStr;
+            
+            // Cắt chuỗi theo dấu '|'
+            getline(ss, sId, '|');
+            getline(ss, mId, '|');
+            getline(ss, rId, '|');
+            getline(ss, date, '|');
+            getline(ss, time, '|');
+            getline(ss, priceStr, '|');
+
+            if (!sId.empty()) {
+                double price = stod(priceStr);
+                Showtime st(sId, mId, rId, date, time, price);
+                add(st);
+            }
         }
         file.close();
     }
+
     void saveToFile() override {
         ofstream file(fileName);
         if (!file.is_open()) return;
 
-        // Định dạng ghi: MãSuất MãPhim MãPhòng Ngày Giờ Giá
         for (const auto& st : dataList) {
-            // Tạm thời ghi dữ liệu cơ bản (Các mã liên kết sẽ xử lý sâu hơn ở phần sau)
-            file << st.getShowtimeId() << " " 
-                 << "M01" << " "       // Tạm để cứng mã phim
-                 << "ROOM01" << " "    // Tạm để cứng mã phòng
-                 << st.getShowDate() << " " 
-                 << st.getStartTime() << " " 
+            file << st.getShowtimeId() << "|" 
+                 << st.getMovieId() << "|" 
+                 << st.getRoomId() << "|" 
+                 << st.getShowDate() << "|" 
+                 << st.getStartTime() << "|" 
                  << st.getBasePrice() << "\n";
         }
         file.close();
+    }
+
+    // --- HÀM MỚI QUAN TRỌNG: Lọc suất chiếu theo Phim ---
+    vector<Showtime> getShowtimesByMovieId(string mId) {
+        vector<Showtime> result;
+        for (const auto& st : dataList) {
+            if (st.getMovieId() == mId) {
+                result.push_back(st);
+            }
+        }
+        return result;
     }
 };
