@@ -94,6 +94,16 @@ bool AccountManager::save() const {
 
 const vector<Account>& AccountManager::getAccounts() const { return items; }
 
+Role AccountManager::getRole(const Account& account) {
+    if (account.role == "Admin") return Role::Admin;
+    if (account.role == "Staff") return Role::Staff;
+    return Role::Customer;
+}
+
+bool AccountManager::hasRole(const Account& account, Role role) {
+    return getRole(account) == role;
+}
+
 const Account* AccountManager::authenticate(const string& username,
                                              const string& password) const {
     for (const Account& account : items) {
@@ -124,7 +134,7 @@ bool AccountManager::registerAccount(const string& username,
                      "Customer", fullName, phone, true});
     if (!save()) {
         items.pop_back();
-        errorMessage = "Khong the ghi file users.txt.";
+        errorMessage = "Khong the ghi file data/users.txt.";
         return false;
     }
     return true;

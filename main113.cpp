@@ -1,7 +1,7 @@
 #include "Menu.h"
 
 int main() {
-    AccountManager accountManager("users.txt");
+    AccountManager accountManager("data/users.txt");
     runMainMenu(accountManager);
     return 0;
 }

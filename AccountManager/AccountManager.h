@@ -17,6 +17,12 @@ struct Account {
     bool active;
 };
 
+enum class Role {
+    Admin = 0,
+    Staff = 1,
+    Customer = 2
+};
+
 class AccountManager : public Manager<Account> {
 private:
     static string trim(const string& value);
@@ -26,12 +32,14 @@ private:
     void ensureDefaultAdmin();
 
 public:
-    explicit AccountManager(const string& fileName = "users.txt");
+    explicit AccountManager(const string& fileName = "data/users.txt");
 
     bool load() override;
     bool save() const override;
     const Account* findById(const string& id) const override;
     const vector<Account>& getAccounts() const;
+    static Role getRole(const Account& account);
+    static bool hasRole(const Account& account, Role role);
 
     const Account* authenticate(const string& username,
                                 const string& password) const;

@@ -1,5 +1,7 @@
 #include "Menu.h"
 
+#include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -46,6 +48,16 @@ void printAccount(const Account& account) {
     cout << account.id << " | " << account.username << " | " << account.role
          << " | " << account.fullName << " | " << account.phone << " | "
          << (account.active ? "Dang hoat dong" : "Da khoa") << '\n';
+}
+
+string lowerCase(string value) {
+    transform(value.begin(), value.end(), value.begin(),
+              [](unsigned char character) { return static_cast<char>(tolower(character)); });
+    return value;
+}
+
+bool containsIgnoreCase(const string& value, const string& keyword) {
+    return lowerCase(value).find(lowerCase(keyword)) != string::npos;
 }
 
 void registerMenu(AccountManager& manager) {
@@ -137,24 +149,42 @@ void customerMenu(AccountManager& manager, const Account& account) {
 void managementMenu(AccountManager& manager) {
     while (true) {
         cout << "\n===== MENU QUAN LY =====\n"
-             << "1. Danh sach tat ca tai khoan\n"
+             << "1. Tim kiem Staff/Customer\n"
              << "2. Danh sach Staff\n"
              << "3. Danh sach Customer\n"
-             << "4. Khoa/Cấp lai tai khoan\n"
+             << "4. Khoa/Mo khoa tai khoan\n"
              << "0. Quay lai\n";
         const int choice = readChoice("Chon: ");
         if (choice == 0) return;
-        if (choice >= 1 && choice <= 3) {
+        if (choice == 1) {
+            const string keyword = readLine(
+                "Nhap mot gia tri Staff/Customer (ID, username, ho ten hoac so dien thoai): ");
+            bool found = false;
             for (const Account& account : manager.getAccounts()) {
-                if (choice == 1 || (choice == 2 && account.role == "Staff") ||
-                    (choice == 3 && account.role == "Customer")) {
+                if (!AccountManager::hasRole(account, Role::Admin) &&
+                    (keyword.empty() || containsIgnoreCase(account.id, keyword) ||
+                     containsIgnoreCase(account.username, keyword) ||
+                     containsIgnoreCase(account.fullName, keyword) ||
+                     containsIgnoreCase(account.phone, keyword))) {
+                    printAccount(account);
+                    found = true;
+                }
+            }
+            if (!found) {
+                cout << "Khong tim thay Staff/Customer phu hop. Chi can nhap mot gia tri, "
+                    "vi du: S01, C01, staff01 hoac customer01.\n";
+            }
+        } else if (choice == 2 || choice == 3) {
+            for (const Account& account : manager.getAccounts()) {
+                const Role role = choice == 2 ? Role::Staff : Role::Customer;
+                if (AccountManager::hasRole(account, role)) {
                     printAccount(account);
                 }
             }
         } else if (choice == 4) {
             const string id = readLine("ID tai khoan: ");
             const Account* account = manager.findById(id);
-            if (!account || account->role == "Admin") {
+            if (!account || AccountManager::hasRole(*account, Role::Admin)) {
                 cout << "Khong tim thay tai khoan phu hop.\n";
                 continue;
             }
@@ -191,7 +221,10 @@ void loginMenu(AccountManager& manager) {
 
     if (password == account->password) {
         cout << "Dang nhap thanh cong. Xin chao " << account->fullName << "!\n";
-        if (account->role == "Admin") managementMenu(manager);
+        if (AccountManager::hasRole(*account, Role::Admin) ||
+            AccountManager::hasRole(*account, Role::Staff)) {
+            managementMenu(manager);
+        }
         else customerMenu(manager, *account);
         return;
     }
