@@ -42,7 +42,6 @@ public:
         }
         file.close();
     }
-
     // GHI ĐÈ (Override) hàm lưu file
     void saveToFile() override {
         ofstream file(fileName);
@@ -50,6 +49,11 @@ public:
 
         // Quét toàn bộ phim và ghi vào file theo định dạng: Mã|Tên|Thểloại|ThờiLượng|Tuổi
         for (const auto& m : dataList) {
+            file << m.getMovieId() << "|" 
+                 << m.getTitle() << "|" 
+                 << m.getGenre() << "|" 
+                 << m.getDuration() << "|" 
+                 << m.getAgeLimit() << "\n";
         }
         file.close();
     }

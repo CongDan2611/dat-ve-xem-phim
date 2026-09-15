@@ -21,7 +21,8 @@ public:
     // Getters để lấy thông tin phim khi cần in ra vé
     string getTitle() const;
     int getDuration() const;
-    
+    string getMovieId() const { return movieId; }
+    string getGenre() const { return genre; }
     // Hàm in thông tin chi tiết của phim
     void displayMovieInfo() const;
 };

@@ -25,13 +25,19 @@ public:
         }
         file.close();
     }
-
     void saveToFile() override {
         ofstream file(fileName);
         if (!file.is_open()) return;
 
+        // Định dạng ghi: MãSuất MãPhim MãPhòng Ngày Giờ Giá
         for (const auto& st : dataList) {
-            // Tương tự, bạn cần bổ sung Getters bên Showtime.h để lấy dữ liệu ghi vào file
+            // Tạm thời ghi dữ liệu cơ bản (Các mã liên kết sẽ xử lý sâu hơn ở phần sau)
+            file << st.getShowtimeId() << " " 
+                 << "M01" << " "       // Tạm để cứng mã phim
+                 << "ROOM01" << " "    // Tạm để cứng mã phòng
+                 << st.getShowDate() << " " 
+                 << st.getStartTime() << " " 
+                 << st.getBasePrice() << "\n";
         }
         file.close();
     }

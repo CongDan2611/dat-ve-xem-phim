@@ -60,16 +60,69 @@ void Menu::showAdminMenu() {
     int choice;
     do {
         cout << "\n--- MENU QUAN LY ---" << endl;
-        cout << "1. Quan ly Phim (Movie)" << endl;
-        cout << "2. Quan ly Suat chieu (Showtime)" << endl;
+        cout << "1. Quan ly Phim (Them phim moi)" << endl;
+        cout << "2. Quan ly Suat chieu (Them suat chieu moi)" << endl;
         cout << "0. Quay lai menu chinh" << endl;
         cout << "Moi chon: ";
         cin >> choice;
 
         if (choice == 1) {
-            cout << ">> Tinh nang Quan ly Phim dang duoc xay dung..." << endl;
+            string id, title, genre;
+            int duration, ageLimit;
+            
+            cout << "\n--- THEM PHIM MOI ---" << endl;
+            cout << "Nhap Ma phim (VD: M02): ";
+            cin >> id;
+            
+            // Xóa bộ nhớ đệm trước khi dùng getline để không bị trôi lệnh nhập chuỗi
+            cin.ignore(); 
+            
+            cout << "Nhap Ten phim: ";
+            getline(cin, title); // Hỗ trợ nhập tên phim có dấu cách
+            
+            cout << "Nhap The loai: ";
+            getline(cin, genre);
+            
+            cout << "Nhap Thoi luong (phut): ";
+            cin >> duration;
+            
+            cout << "Nhap Do tuoi quy dinh: ";
+            cin >> ageLimit;
+
+            // Khởi tạo đối tượng Movie và gọi hàm add() của template DataManager
+            Movie newMovie(id, title, duration, genre, ageLimit);
+            movieMgr.add(newMovie);
+            
+            cout << ">> Them phim thanh cong!" << endl;
+
         } else if (choice == 2) {
-            cout << ">> Tinh nang Quan ly Suat chieu dang duoc xay dung..." << endl;
+            string id, movieId, roomId, date, time;
+            double price;
+            
+            cout << "\n--- THEM SUAT CHIEU MOI ---" << endl;
+            cout << "Nhap Ma suat chieu (VD: ST02): ";
+            cin >> id;
+            
+            cout << "Nhap Ma phim (VD: M01): ";
+            cin >> movieId;
+            
+            cout << "Nhap Ma phong (VD: ROOM01): ";
+            cin >> roomId;
+            
+            cout << "Nhap Ngay chieu (YYYY-MM-DD): ";
+            cin >> date;
+            
+            cout << "Nhap Gio chieu (HH:MM): ";
+            cin >> time;
+            
+            cout << "Nhap Gia ve co ban: ";
+            cin >> price;
+
+            // Khởi tạo đối tượng Showtime (Tạm thời để nullptr cho đối tượng con)
+            Showtime newShowtime(id, date, time, price, nullptr, nullptr);
+            showtimeMgr.add(newShowtime);
+            
+            cout << ">> Them suat chieu thanh cong!" << endl;
         }
     } while (choice != 0);
 }
