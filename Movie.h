@@ -10,10 +10,13 @@ private:
     string title;    // Tên phim (VD: Avengers)
     int duration;    // Thời lượng tính bằng phút
     string genre;    // Thể loại (Hành động, Hài...)
-
+    int ageLimit;   // Độ tuổi cho phép
 public:
     // Hàm khởi tạo đầy đủ tham số để tạo ra một bộ phim hoàn chỉnh
-    Movie(string id, string t, int d, string g);
+    Movie(string id, string t, int d, string g, int age) 
+        : movieId(id), title(t), duration(d), genre(g), ageLimit(age) {}
+
+    int getAgeLimit() const { return ageLimit; }
 
     // Getters để lấy thông tin phim khi cần in ra vé
     string getTitle() const;

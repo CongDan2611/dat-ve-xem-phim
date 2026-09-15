@@ -1,10 +1,6 @@
 #include "Showtime.h"
 #include <iostream>
 
-// Khởi tạo các thuộc tính và gán con trỏ
-Showtime::Showtime(string id, string time, Movie* m, CinemaRoom* r)
-    : showtimeId(id), startTime(time), movie(m), room(r) {}
-
 // Hàm in thông tin chi tiết
 void Showtime::displayShowtimeInfo() const {
     cout << "== LICH CHIEU: " << showtimeId << " ==" << endl;
