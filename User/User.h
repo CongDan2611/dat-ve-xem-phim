@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class Person {
+class User {
 protected:
     string id;
     string name;
@@ -12,10 +12,10 @@ protected:
     string email;
 
 public:
-    Person();
-        Person(const string& id, const string& name,
+    User();
+        User(const string& id, const string& name,
             const string& phone, const string& email);
-    virtual ~Person() = default;
+    virtual ~User() = default;
 
     string getId() const;
     string getName() const;

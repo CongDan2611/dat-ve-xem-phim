@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../Person/Person.h"
+#include "../User/User.h"
 
 using namespace std;
 
-class Staff : public Person {
+class Staff : public User {
 private:
     string position;
     double salary;

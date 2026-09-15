@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../Person/Person.h"
+#include "../User/User.h"
 
 using namespace std;
 
-class Customer : public Person {
+class Customer : public User {
 private:
     int loyaltyPoints;
 
