@@ -4,12 +4,12 @@
 
 using namespace std;
 
-Staff::Staff() : Person(), position(""), salary(0) {}
+Staff::Staff() : User(), position(""), salary(0) {}
 
 Staff::Staff(const string& id, const string& name,
              const string& phone, const string& email,
              const string& position, double salary)
-    : Person(id, name, phone, email),
+    : User(id, name, phone, email),
       position(position), salary(salary < 0 ? 0 : salary) {}
 
 string Staff::getPosition() const { return position; }
@@ -23,7 +23,7 @@ void Staff::increaseSalary(double amount) {
 }
 
 void Staff::input() {
-    Person::input();
+    User::input();
     cout << "Nhap chuc vu: ";
     getline(cin, position);
     cout << "Nhap luong: ";
