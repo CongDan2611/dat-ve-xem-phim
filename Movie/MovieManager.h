@@ -1,5 +1,5 @@
 #pragma once
-#include "DataManager.h"
+#include "../Core/DataManager.h"
 #include "Movie.h"
 #include <fstream>  // Thư viện thao tác file
 #include <sstream>  // Thư viện tách chuỗi

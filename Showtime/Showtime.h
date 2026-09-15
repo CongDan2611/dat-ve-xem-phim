@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "Movie.h"
-#include "CinemaRoom.h"
+#include "../Movie/Movie.h"
+#include "../Room/CinemaRoom.h"
 
 using namespace std;
 

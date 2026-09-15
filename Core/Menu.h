@@ -1,6 +1,6 @@
 #pragma once
-#include "MovieManager.h"
-#include "ShowtimeManager.h"
+#include "../Movie/MovieManager.h"
+#include "../Showtime/ShowtimeManager.h"
 #include <iostream>
 
 using namespace std;
