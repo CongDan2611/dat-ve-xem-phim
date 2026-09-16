@@ -1,5 +1,5 @@
 #pragma once
-#include "Ticket.h"
+#include "../Ticket/Ticket.h"
 class StandardTicket : public Ticket
 {public:
 StandardTicket(string ma, string ten, string ghe, double gia);

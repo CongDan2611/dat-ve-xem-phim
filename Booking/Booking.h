@@ -1,5 +1,5 @@
 #pragma once
-#include "Ticket.h"
+#include "../Ticket/Ticket.h"
 #include <vector>
 class Booking
 {private:

@@ -1,4 +1,4 @@
-#include "StandardTicket.h"
+#include "../StandardTicket/StandardTicket.h"
 StandardTicket::StandardTicket(
     string ma,
     string ten,

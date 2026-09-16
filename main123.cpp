@@ -1,7 +1,7 @@
 #include <iostream>
-#include "Booking.h"
-#include "StandardTicket.h"
-#include "VIPTicket.h"
+#include "Booking/Booking.h"
+#include "StandardTicket/StandardTicket.h"
+#include "VIPTicket/VIPTicket.h"
 using namespace std;
 int main()
 {Booking booking;

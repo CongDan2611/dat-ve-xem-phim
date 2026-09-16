@@ -1,5 +1,5 @@
 #pragma once
-#include "Ticket.h"
+#include "../Ticket/Ticket.h"
 class VIPTicket : public Ticket
 {private:
     double phuPhi;

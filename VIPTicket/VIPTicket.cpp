@@ -1,4 +1,4 @@
-#include "VIPTicket.h"
+#include "../VIPTicket/VIPTicket.h"
 VIPTicket::VIPTicket(
     string ma,
     string ten,
