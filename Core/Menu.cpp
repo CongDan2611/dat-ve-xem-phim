@@ -320,8 +320,21 @@ void Menu::showAdminMenu() {
             if (action == 1) {
                 string id, title, genre;
                 int duration, ageLimit;
-                
-                cout << "Nhap Ma phim (VD: M02): "; cin >> id;
+                // --- TỰ ĐỘNG TẠO MÃ PHIM ---
+                vector<Movie> allMovies = movieMgr.getAll();
+                int maxMovieId = 0;
+                for (const auto& m : allMovies) {
+                    string currentId = m.getMovieId();
+                    if (currentId.length() >= 2 && currentId[0] == 'M') {
+                        int num = atoi(currentId.substr(1).c_str()); // Cắt chữ M, lấy số
+                        if (num > maxMovieId) maxMovieId = num;
+                    }
+                }
+                int nextId = maxMovieId + 1;
+                id = "M" + string(nextId < 10 ? "0" : "") + to_string(nextId);
+                // Định dạng ID: M01, M02... M10
+                id = "M" + string(nextId < 10 ? "0" : "") + to_string(nextId);
+                cout << "\n>> He thong tu dong cap Ma phim: " << id << endl;
                 cin.ignore(); 
                 cout << "Nhap Ten phim: "; getline(cin, title); 
                 cout << "Nhap The loai: "; getline(cin, genre);
@@ -385,7 +398,19 @@ void Menu::showAdminMenu() {
             }
             cout << "---------------------------" << endl;
 
-            cout << "Nhap Ma suat chieu (VD: ST02): "; cin >> id;
+            // --- TỰ ĐỘNG TẠO MÃ SUẤT CHIẾU ---
+            vector<Showtime> allST = showtimeMgr.getAll();
+            int maxSTId = 0;
+            for (const auto& st : allST) {
+                string currentId = st.getShowtimeId();
+                if (currentId.length() >= 3 && currentId.substr(0, 2) == "ST") {
+                    int num = atoi(currentId.substr(2).c_str()); // Cắt chữ ST, lấy số
+                    if (num > maxSTId) maxSTId = num;
+                }
+            }
+            int nextSTId = maxSTId + 1;
+            id = "ST" + string(nextSTId < 10 ? "0" : "") + to_string(nextSTId);
+            cout << ">> He thong tu dong cap Ma suat chieu: " << id << endl;
             cout << "Nhap Ma phim (Chon tu danh sach tren): "; cin >> movieId; 
             cout << "Nhap Ma phong (VD: ROOM01): "; cin >> roomId;
             cout << "Nhap Ngay chieu (YYYY-MM-DD): "; cin >> date;
