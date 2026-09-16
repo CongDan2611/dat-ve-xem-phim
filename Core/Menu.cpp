@@ -144,7 +144,7 @@ void Menu::bookingFlow(Movie selectedMovie) {
                 myTicket = new StandardTicket(ticketId, selectedST.getBasePrice());
             }
 
-            ofstream outFile("tickets.txt", ios::app);
+            ofstream outFile("data/tickets.txt", ios::app);
             if (outFile.is_open()) {
                 outFile << ticketId << "|" 
                         << selectedMovie.getTitle() << "|" 

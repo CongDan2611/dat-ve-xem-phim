@@ -19,7 +19,7 @@ private:
     }
 
 public:
-    MovieManager() : DataManager<Movie>("movies.txt") {}
+    MovieManager() : DataManager<Movie>("data/movies.txt") {}
 
     void loadFromFile() override {
         ifstream file(fileName);

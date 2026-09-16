@@ -10,7 +10,7 @@ using namespace std;
 
 class ShowtimeManager : public DataManager<Showtime> {
 public:
-    ShowtimeManager() : DataManager<Showtime>("showtimes.txt") {}
+    ShowtimeManager() : DataManager<Showtime>("data/showtimes.txt") {}
 
     void loadFromFile() override {
         ifstream file(fileName);
