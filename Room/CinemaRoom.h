@@ -17,6 +17,9 @@ public:
     string getRoomId() const;
     string getRoomName() const;
     vector<Seat>& getSeats();
+    
+    // Hàm mới: Tìm ghế theo mã (VD: "A1", "D5")
+    Seat* getSeatById(string seatId);
 
     void displayRoomMap() const;
 };

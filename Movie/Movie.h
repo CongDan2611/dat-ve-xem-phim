@@ -11,28 +11,18 @@ private:
     int duration;
     string genre;
     int ageLimit;
-    string status; // Them thuoc tinh Trang thai: Dang chieu / Sap chieu
+    string status;
 
 public:
-    // Cập nhật Constructor có thêm biến status (mặc định là "Dang chieu")
-    Movie(string id, string t, int d, string g, int age, string st = "Dang chieu") 
-        : movieId(id), title(t), duration(d), genre(g), ageLimit(age), status(st) {}
+    Movie(string id = "", string t = "", int d = 0, string g = "", int age = 0, string s = "");
 
-    // --- GETTERS ---
-    string getMovieId() const { return movieId; }
-    string getTitle() const { return title; }
-    int getDuration() const { return duration; }
-    string getGenre() const { return genre; }
-    int getAgeLimit() const { return ageLimit; }
-    string getStatus() const { return status; }
+    string getMovieId() const;
+    string getTitle() const;
+    int getDuration() const;
+    string getGenre() const;
+    int getAgeLimit() const;
+    string getStatus() const;
 
-    // --- SETTERS ---
-    void setStatus(string st) { status = st; }
-    void setTitle(string t) { title = t; }
-    void setGenre(string g) { genre = g; }
-    void setDuration(int d) { duration = d; }
-    void setAgeLimit(int a) { ageLimit = a; }
-
-    // Hàm in thông tin chi tiết của phim
+    void setStatus(string s);
     void displayMovieInfo() const;
 };

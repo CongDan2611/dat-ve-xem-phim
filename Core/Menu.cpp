@@ -1,6 +1,9 @@
 #include "Menu.h"
 #include "../Room/CinemaRoom.h"
+#include "../AccountManager/AccountManager.h"
 #include <fstream>
+#include <sstream>
+#include <algorithm>
 
 Menu::Menu() {
     movieMgr.loadFromFile();
@@ -8,26 +11,126 @@ Menu::Menu() {
 }
 
 void Menu::run() {
+    AccountManager accMgr;
+    accMgr.load(); // Tải danh sách tài khoản từ data/users.txt
+
+    const Account* currentAccount = nullptr;
+    int authChoice;
+
+    // --- MÀN HÌNH XÁC THỰC (ĐĂNG NHẬP / ĐĂNG KÝ) ---
+    do {
+        cout << "\n================ HE THONG XEM PHIM ================" << endl;
+        cout << "1. Dang nhap" << endl;
+        cout << "2. Dang ky tai khoan khach hang" << endl;
+        cout << "0. Thoat chuong trinh" << endl;
+        cout << "===================================================" << endl;
+        cout << "Moi ban chon: ";
+        cin >> authChoice;
+
+        if (authChoice == 1) {
+            string user, pass;
+            cout << "Nhap username: "; cin >> user;
+            cout << "Nhap password: "; cin >> pass;
+
+            currentAccount = accMgr.authenticate(user, pass);
+            if (currentAccount != nullptr) {
+                if (!currentAccount->active) {
+                    cout << ">> Tai khoan cua bạn da bị khoa!" << endl;
+                    currentAccount = nullptr;
+                    system("pause");
+                } else {
+                    cout << ">> Dang nhap thanh công! Xin chao: " << currentAccount->fullName << endl;
+                    system("pause");
+                    break; // Thoát vòng lặp đăng nhập, đi tiếp vào hệ thống
+                }
+            } else {
+                cout << ">> Sai username hoac password!" << endl;
+                system("pause");
+            }
+        } 
+        else if (authChoice == 2) {
+            string user, pass, name, phone, err;
+            cout << "\n--- DANG KY TAI KHOAN ---" << endl;
+            cout << "Nhap username moi: "; cin >> user;
+            cout << "Nhap password: "; cin >> pass;
+            cin.ignore();
+            cout << "Nhap ho ten day du: "; getline(cin, name);
+            cout << "Nhap so dien thoai: "; cin >> phone;
+
+            if (accMgr.registerAccount(user, pass, name, phone, err)) {
+                cout << ">> Đang ký tai khoan thanh công! Ban co the đăng nhap ngay." << endl;
+            } else {
+                cout << ">> Đang ky that bai: " << err << endl;
+            }
+            system("pause");
+        } 
+        else if (authChoice == 0) {
+            cout << "Tam biet!" << endl;
+            return;
+        }
+    } while (true);
+
+    // --- MENU CHÍNH SAU KHI ĐĂNG NHẬP ---
     int choice;
+    Role userRole = AccountManager::getRole(*currentAccount);
+
     do {
         cout << "\n============= HE THONG DAT VE XEM PHIM =============" << endl;
-        cout << "1. Menu Khach Hang (Tim kiem & Dat ve)" << endl;
-        cout << "2. Menu Quan Ly (Admin)" << endl;
-        cout << "0. Thoat chuong trinh" << endl;
+        cout << "Xin chao: " << currentAccount->fullName << " (" << currentAccount->role << ")" << endl;
+        cout << "----------------------------------------------------" << endl;
+        
+        if (userRole == Role::Customer) {
+            // KHÁCH HÀNG: Đưa thẳng vào các tùy chọn tìm kiếm & đặt vé luôn, không qua menu phụ nữa
+            cout << "1. Dat ve ngay (Cac phim dang chieu)" << endl;
+            cout << "2. Tim phim theo ten" << endl;
+            cout << "3. Tim phim theo the loai" << endl;
+            cout << "0. Dang xuat & Thoat" << endl;
+        } else {
+            // ADMIN / STAFF: Giữ nguyên menu có quyền quản lý
+            cout << "1. Menu Khach Hang (Dat ve)" << endl;
+            cout << "2. Menu Quan Ly (Admin / Staff)" << endl;
+            cout << "0. Dang xuat & Thoat" << endl;
+        }
         cout << "====================================================" << endl;
         cout << "Moi ban chon: ";
         cin >> choice;
 
-        switch (choice) {
-            case 1: showCustomerMenu(); break;
-            case 2: showAdminMenu(); break;
-            case 0: 
-                cout << "Dang luu du lieu vao file txt..." << endl;
-                movieMgr.saveToFile();
-                showtimeMgr.saveToFile();
-                cout << "Da luu thanh cong. Tam biet!" << endl;
-                break;
-            default: cout << "Lua chon khong hop le, vui long nhap lai!" << endl;
+        if (userRole == Role::Customer) {
+            // Xử lý trực tiếp cho Khách hàng
+            if (choice == 1) {
+                vector<Movie> list = movieMgr.getMoviesByStatus("Dang chieu");
+                displayAndSelectMovie(list);
+            } else if (choice == 2) {
+                string keyword;
+                cout << "Nhap ten phim can tim: ";
+                cin.ignore();
+                getline(cin, keyword);
+                vector<Movie> list = movieMgr.searchMoviesByTitle(keyword);
+                displayAndSelectMovie(list);
+            } else if (choice == 3) {
+                string keyword;
+                cout << "Nhap the loai can tim: ";
+                cin.ignore();
+                getline(cin, keyword);
+                vector<Movie> list = movieMgr.searchMoviesByGenre(keyword);
+                displayAndSelectMovie(list);
+            }
+        } else {
+            // Xử lý cho Admin / Staff
+            if (choice == 1) {
+                showCustomerMenu();
+            } else if (choice == 2) {
+                showAdminMenu();
+            }
+        }
+
+        if (choice == 0) {
+            cout << "Dang luu du lieu vao file txt..." << endl;
+            movieMgr.saveToFile();
+            showtimeMgr.saveToFile();
+            accMgr.save();
+            cout << "Da luu thanh cong. Tam biet!" << endl;
+            break;
         }
     } while (choice != 0);
 }
@@ -39,7 +142,7 @@ void Menu::showCustomerMenu() {
         cout << "1. Dat ve ngay (Cac phim dang chieu)" << endl;
         cout << "2. Tim phim theo ten" << endl;
         cout << "3. Tim phim theo the loai" << endl;
-        cout << "0. Quay lai menu chinh" << endl;
+        cout << "0. Quay lai" << endl;
         cout << "Moi chon: ";
         cin >> choice;
 
@@ -67,6 +170,7 @@ void Menu::showCustomerMenu() {
 void Menu::displayAndSelectMovie(vector<Movie>& movies) {
     if (movies.empty()) {
         cout << ">> Khong co bo phim nao phu hop!" << endl;
+        system("pause");
         return;
     }
 
@@ -95,6 +199,7 @@ void Menu::bookingFlow(Movie selectedMovie) {
     
     if (listST.empty()) {
         cout << ">> Xin loi, phim nay hien chua co lich chieu nao!" << endl;
+        system("pause");
         return;
     }
 
@@ -113,30 +218,51 @@ void Menu::bookingFlow(Movie selectedMovie) {
         Showtime selectedST = listST[selectST - 1];
         CinemaRoom room(selectedST.getRoomId(), "Phong Chieu VIP");
         
+        // Đọc vé cũ từ file data/tickets.txt để đánh dấu [X]
+        ifstream inFile("data/tickets.txt");
+        if (inFile.is_open()) {
+            string line;
+            while (getline(inFile, line)) {
+                stringstream ss(line);
+                string tId, mName, tDate, tTime, sId, tType, tPrice;
+                getline(ss, tId, '|'); getline(ss, mName, '|'); getline(ss, tDate, '|');
+                getline(ss, tTime, '|'); getline(ss, sId, '|');
+                
+                if (tId.find(selectedST.getShowtimeId()) != string::npos) {
+                    Seat* s = room.getSeatById(sId);
+                    if (s != nullptr) s->setBooked(true);
+                }
+            }
+            inFile.close();
+        }
+
         cout << "\n>> Ban da chon Suat: " << selectedST.getStartTime() << " (Phong: " << selectedST.getRoomId() << ")" << endl;
         room.displayRoomMap();
         
-        int selectSeat;
-        cout << ">> Chon so thu tu ghe ban muon ngoi: ";
-        cin >> selectSeat;
+        string selectSeatId;
+        cout << ">> Nhap Ma ghe ban muon ngoi (VD: A5, D8) hoac go '0' de huy: ";
+        cin >> selectSeatId;
 
-        vector<Seat>& seats = room.getSeats();
-        if (selectSeat > 0 && selectSeat <= seats.size()) {
-            Seat& chosenSeat = seats[selectSeat - 1];
-            
-            if (chosenSeat.getIsBooked()) {
+        if (selectSeatId == "0") return;
+
+        selectSeatId[0] = toupper(selectSeatId[0]);
+        Seat* chosenSeat = room.getSeatById(selectSeatId);
+        
+        if (chosenSeat != nullptr) {
+            if (chosenSeat->getIsBooked()) {
                 cout << ">> Ghe nay da co nguoi dat! Vui long chon ghe khac." << endl;
+                system("pause");
                 return;
             }
 
-            chosenSeat.setBooked(true);
+            chosenSeat->setBooked(true);
             
             Ticket* myTicket = nullptr;
-            string ticketId = "TICKET_" + selectedST.getShowtimeId() + "_" + chosenSeat.getSeatId();
+            string ticketId = "TICKET_" + selectedST.getShowtimeId() + "_" + chosenSeat->getSeatId();
             string ticketType = "Thuong";
             double finalPrice = selectedST.getBasePrice();
 
-            if (chosenSeat.getIsVIP()) {
+            if (chosenSeat->getIsVIP()) {
                 myTicket = new VIPTicket(ticketId, selectedST.getBasePrice());
                 ticketType = "VIP";
                 finalPrice = selectedST.getBasePrice() * 1.5;
@@ -146,13 +272,9 @@ void Menu::bookingFlow(Movie selectedMovie) {
 
             ofstream outFile("data/tickets.txt", ios::app);
             if (outFile.is_open()) {
-                outFile << ticketId << "|" 
-                        << selectedMovie.getTitle() << "|" 
-                        << selectedST.getShowDate() << "|" 
-                        << selectedST.getStartTime() << "|" 
-                        << chosenSeat.getSeatId() << "|" 
-                        << ticketType << "|" 
-                        << finalPrice << "\n";
+                outFile << ticketId << "|" << selectedMovie.getTitle() << "|" 
+                        << selectedST.getShowDate() << "|" << selectedST.getStartTime() << "|" 
+                        << chosenSeat->getSeatId() << "|" << ticketType << "|" << finalPrice << "\n";
                 outFile.close();
             }
 
@@ -161,15 +283,16 @@ void Menu::bookingFlow(Movie selectedMovie) {
             cout << "========================================" << endl;
             cout << "Phim: " << selectedMovie.getTitle() << endl;
             cout << "Suat chieu: " << selectedST.getStartTime() << " | Ngay: " << selectedST.getShowDate() << endl;
-            cout << "Vi tri ghe: " << chosenSeat.getSeatId() << endl;
+            cout << "Vi tri ghe: " << chosenSeat->getSeatId() << endl;
             
             myTicket->displayTicket();
             cout << "========================================\n" << endl;
+            system("pause");
 
             delete myTicket;
-
         } else {
-            cout << ">> Lua chon ghe khong hop le!" << endl;
+            cout << ">> Ma ghe khong ton tai! Vui long nhap dung dinh dang (VD: A5, H12)." << endl;
+            system("pause");
         }
     }
 }
@@ -208,6 +331,7 @@ void Menu::showAdminMenu() {
                 Movie newMovie(id, title, duration, genre, ageLimit, "Dang chieu");
                 movieMgr.add(newMovie);
                 cout << ">> Them phim thanh cong!" << endl;
+                system("pause");
             } 
             else if (action == 2) {
                 cout << "\n--- DANH SACH PHIM HIEN TAI ---" << endl;
@@ -225,6 +349,7 @@ void Menu::showAdminMenu() {
                     cout << "Nhap Trang thai moi (Dang chieu / Sap chieu): "; getline(cin, newStatus);
                     movieMgr.updateMovieStatus(id, newStatus);
                 }
+                system("pause");
             } 
             else if (action == 3) {
                 cout << "\n--- DANH SACH PHIM HIEN TAI ---" << endl;
@@ -239,6 +364,7 @@ void Menu::showAdminMenu() {
                     cout << "\nNhap Ma phim can xoa: "; cin >> id;
                     movieMgr.deleteMovie(id);
                 }
+                system("pause");
             }
         } 
         else if (choice == 2) {
@@ -246,8 +372,21 @@ void Menu::showAdminMenu() {
             double price;
             
             cout << "\n--- THEM SUAT CHIEU MOI ---" << endl;
+            cout << "\nDanh sach phim dang co trong he thong:" << endl;
+            vector<Movie> allMovies = movieMgr.getAll();
+            if (allMovies.empty()) {
+                cout << ">> Hien chua co phim nao! Vui long them phim truoc." << endl;
+                system("pause");
+                continue;
+            } else {
+                for (const auto& m : allMovies) {
+                    cout << " - [Ma: " << m.getMovieId() << "] " << m.getTitle() << endl;
+                }
+            }
+            cout << "---------------------------" << endl;
+
             cout << "Nhap Ma suat chieu (VD: ST02): "; cin >> id;
-            cout << "Nhap Ma phim (VD: M01): "; cin >> movieId;
+            cout << "Nhap Ma phim (Chon tu danh sach tren): "; cin >> movieId; 
             cout << "Nhap Ma phong (VD: ROOM01): "; cin >> roomId;
             cout << "Nhap Ngay chieu (YYYY-MM-DD): "; cin >> date;
             cout << "Nhap Gio chieu (HH:MM): "; cin >> time;
@@ -256,6 +395,7 @@ void Menu::showAdminMenu() {
             Showtime newShowtime(id, movieId, roomId, date, time, price);
             showtimeMgr.add(newShowtime);
             cout << ">> Them suat chieu thanh cong!" << endl;
+            system("pause");
         }
     } while (choice != 0);
 }

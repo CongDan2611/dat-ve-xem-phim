@@ -1,28 +1,62 @@
 #include "CinemaRoom.h"
 #include <iostream>
+#include <iomanip> // Thư viện để căn lề setw()
 
 CinemaRoom::CinemaRoom(string id, string name) : roomId(id), roomName(name) {
-    // Khởi tạo mẫu 6 ghế cho phòng chiếu (4 ghế thường, 2 ghế VIP)
-    seats.push_back(Seat("A1", false));
-    seats.push_back(Seat("A2", false));
-    seats.push_back(Seat("A3", false));
-    seats.push_back(Seat("A4", false));
-    seats.push_back(Seat("B1", true)); // Ghế VIP
-    seats.push_back(Seat("B2", true)); // Ghế VIP
+    char rows[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}; // 8 hàng
+    for (int i = 0; i < 8; i++) {
+        for (int j = 1; j <= 12; j++) { // 12 cột
+            string seatId = string(1, rows[i]) + to_string(j); // Gộp chữ và số (VD: A1)
+            
+            // Thiết lập dải ghế VIP nằm ở hàng D, E, F (từ cột 3 đến 10)
+            bool isVip = (i >= 3 && i <= 5 && j >= 3 && j <= 10);
+            
+            seats.push_back(Seat(seatId, isVip, false));
+        }
+    }
 }
 
 string CinemaRoom::getRoomId() const { return roomId; }
 string CinemaRoom::getRoomName() const { return roomName; }
 vector<Seat>& CinemaRoom::getSeats() { return seats; }
 
-void CinemaRoom::displayRoomMap() const {
-    cout << "\n========================================" << endl;
-    cout << "       --- MAN HINH CHIEU PHIM ---      " << endl;
-    cout << "========================================" << endl;
-    for (int i = 0; i < seats.size(); i++) {
-        cout << "[" << i + 1 << "] Ghe " << seats[i].getSeatId() 
-             << (seats[i].getIsVIP() ? " [VIP]" : " [Thuong]")
-             << (seats[i].getIsBooked() ? " --> (Da duoc dat)" : " --> [Trong]") << endl;
+Seat* CinemaRoom::getSeatById(string seatId) {
+    for (auto& seat : seats) {
+        if (seat.getSeatId() == seatId) return &seat;
     }
-    cout << "----------------------------------------" << endl;
+    return nullptr;
+}
+
+void CinemaRoom::displayRoomMap() const {
+    cout << "\n=======================================================" << endl;
+    cout << "                [[ MAN HINH CHIEU ]]                   " << endl;
+    cout << "=======================================================\n" << endl;
+    
+    // In thanh ngang số cột (1 đến 12) căn đều khoảng trắng
+    cout << "      ";
+    for (int j = 1; j <= 12; j++) {
+        cout << setw(3) << j << " ";
+    }
+    cout << endl;
+
+    int index = 0;
+    char rows[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+    for (int i = 0; i < 8; i++) {
+        cout << " " << rows[i] << "  "; // In tên hàng và khoảng cách cố định
+        for (int j = 1; j <= 12; j++) {
+            if (seats[index].getIsBooked()) {
+                cout << "[X] ";
+            } else if (seats[index].getIsVIP()) {
+                cout << "[V] ";
+            } else {
+                cout << "[ ] ";
+            }
+            index++;
+        }
+        cout << endl;
+    }
+    
+    cout << "\n-------------------------------------------------------" << endl;
+    cout << "  Chu thich: [ ] Trong (Thuong) | [V] VIP | [X] Da Dat   " << endl;
+    cout << "-------------------------------------------------------" << endl;
 }

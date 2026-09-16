@@ -10,6 +10,16 @@ using namespace std;
 
 class MovieManager : public DataManager<Movie> {
 private:
+    // Tự động xóa khoảng trắng thừa ở đầu và cuối
+    string trim(string s) {
+        int start = 0;
+        while (start < s.length() && s[start] == ' ') start++;
+        int end = s.length() - 1;
+        while (end >= 0 && s[end] == ' ') end--;
+        if (start > end) return "";
+        return s.substr(start, end - start + 1);
+    }
+
     string toLower(string s) {
         string res = s;
         for (int i = 0; i < res.length(); i++) {
@@ -42,7 +52,7 @@ public:
                 int age = stoi(ageStr);
                 if (status.empty()) status = "Dang chieu"; 
                 
-                Movie m(id, title, duration, genre, age, status);
+                Movie m(trim(id), trim(title), duration, trim(genre), age, trim(status));
                 add(m);
             }
         }
@@ -54,20 +64,15 @@ public:
         if (!file.is_open()) return;
 
         for (const auto& m : dataList) {
-            file << m.getMovieId() << "|" 
-                 << m.getTitle() << "|" 
-                 << m.getGenre() << "|" 
-                 << m.getDuration() << "|" 
-                 << m.getAgeLimit() << "|"
-                 << m.getStatus() << "\n";
+            file << m.getMovieId() << "|" << m.getTitle() << "|" << m.getGenre() << "|" 
+                 << m.getDuration() << "|" << m.getAgeLimit() << "|" << m.getStatus() << "\n";
         }
         file.close();
     }
 
-    // --- NGHIỆP VỤ KHÁCH HÀNG: Gom kết quả vào vector thay vì in ---
     vector<Movie> searchMoviesByTitle(string keyword) {
         vector<Movie> result;
-        string keyLower = toLower(keyword); 
+        string keyLower = toLower(trim(keyword)); 
         for (const auto& m : dataList) {
             if (toLower(m.getTitle()).find(keyLower) != string::npos) {
                 result.push_back(m);
@@ -78,7 +83,7 @@ public:
 
     vector<Movie> searchMoviesByGenre(string keyword) {
         vector<Movie> result;
-        string keyLower = toLower(keyword);
+        string keyLower = toLower(trim(keyword)); 
         for (const auto& m : dataList) {
             if (toLower(m.getGenre()).find(keyLower) != string::npos) {
                 result.push_back(m);
@@ -97,7 +102,6 @@ public:
         return result;
     }
 
-    // --- NGHIỆP VỤ QUẢN LÝ (ADMIN) ---
     void updateMovieStatus(string id, string newStatus) {
         for (auto& m : dataList) {
             if (m.getMovieId() == id) {
