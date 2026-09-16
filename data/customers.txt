@@ -1,0 +1,3 @@
+ID | TenDangNhap | MatKhau | VaiTro | HoTen | SoDienThoai | TrangThai
+C01 | customer01 | customer123 | Customer | Nguyen Van Customer | 0900000002 | Active
+C02 | customer02 | customer123 | Customer | Tran Thi Customer | 0900000003 | Active
